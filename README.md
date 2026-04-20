@@ -1,22 +1,64 @@
-# sentinel1-monthly-tile-downloader
+# sentinel-monthly-tile-downloader
 
-A Python script to download the best monthly Sentinel-1 scenes for selected tiles from the Microsoft Planetary Computer using coverage-based selection.
+A Python workflow for downloading the best monthly **Sentinel-1** and **Sentinel-2** scenes for selected tiles from the **Microsoft Planetary Computer**.
 
-This workflow uses the **Sentinel-2 tiling grid**, which is based on the **Military Grid Reference System (MGRS)**. The selected tile IDs (for example, `21JXJ`, `24LTR`) are Sentinel-2 MGRS tiles used to define the areas of interest for Sentinel-1 data downloads.
+This repository uses the **Sentinel-2 tiling grid**, which is based on the **Military Grid Reference System (MGRS)**. Tile IDs such as `21JXJ`, `24LTR`, or `21LXK` are used to define the area of interest for both Sentinel-1 and Sentinel-2 monthly downloads.
+
+## Repository contents
+
+This repo includes:
+
+- **Sentinel-1 notebook** for monthly scene selection and download
+- **Sentinel-2 notebook** for monthly best-scene selection using tile coverage and cloud filtering
+- Export of clipped imagery, metadata, and summary tables
 
 ## Features
 
-- Search Sentinel-1 scenes from Microsoft Planetary Computer
-- Select the best scene for each month for each chosen tile
-- Filter scenes by minimum tile coverage
-- Download `VV` and `VH` assets
-- Save item metadata as JSON
-- Export the monthly scene selection as CSV
-- Switch between **RTC** and **GRD** by changing `collection_name`
+- Search **Sentinel-1** scenes from Microsoft Planetary Computer
+- Search **Sentinel-2 L2A** scenes from Microsoft Planetary Computer
+- Use **Sentinel-2 MGRS tiles** to define the area of interest
+- Select the **best scene for each month** for each chosen tile
+- Filter scenes by **minimum tile coverage**
+- For Sentinel-1, download assets such as **VV** and **VH**
+- For Sentinel-2, download selected bands and **SCL**
 
-## Requirements
+## Sentinel-1 workflow
 
-Install the required Python packages:
+The Sentinel-1 part of this repository is used to:
 
-```bash
-pip install geopandas pandas planetary-computer pystac-client requests shapely
+1. Search Sentinel-1 scenes for a selected tile and month
+2. Evaluate scene coverage over the tile
+3. Select the best monthly scene
+4. Download the required SAR assets
+
+
+## Sentinel-2 workflow
+
+The Sentinel-2 notebook is designed to find the **best monthly Sentinel-2 scene** for a selected MGRS tile and save the clipped bands for that tile.
+
+## Sentinel-2 bands saved
+
+The Sentinel-2 workflow saves the following assets when available:
+
+- `B01`
+- `B02`
+- `B03`
+- `B04`
+- `B05`
+- `B06`
+- `B07`
+- `B08`
+- `B8A`
+- `B09`
+- `B10`
+- `B11`
+- `B12`
+- `SCL`
+
+## Sentinel-2 quality criteria
+
+The script uses the **Scene Classification Layer (SCL)** to estimate usable coverage.
+
+### Clear / usable SCL classes
+```python
+CLEAR_SCL = np.array([4, 5, 6], dtype=np.int16)
